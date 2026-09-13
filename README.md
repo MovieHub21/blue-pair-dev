@@ -34,6 +34,7 @@ Required:
 - `DATABASE_URL` (server only)
 - `SITE_ENVIRONMENT` (`development`, `preview`, or `production`)
 - `DEV_CONTROL_SECRET`
+- DATABASE-PASSWORD Bluepair@321...
 
 Optional:
 
