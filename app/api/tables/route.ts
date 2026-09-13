@@ -1,0 +1,2 @@
+import {NextResponse} from 'next/server'; import {assertDeveloperAccess} from '@/lib/auth'; import {sql} from '@/lib/server';
+export async function GET(){try{await assertDeveloperAccess();return NextResponse.json({tables:await sql(`select table_schema, table_name from information_schema.tables where table_schema not in ('pg_catalog','information_schema') order by table_schema, table_name`)})}catch(e:any){return NextResponse.json({error:e.message},{status:e.message==='UNAUTHORIZED'?401:500})}}

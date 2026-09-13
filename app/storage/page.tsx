@@ -1,0 +1,4 @@
+import Shell from '@/components/Shell'
+import {supabaseAdmin} from '@/lib/server'
+export const dynamic='force-dynamic'
+export default async function Storage(){const {data,error}=await supabaseAdmin.storage.listBuckets();return <Shell><p className="text-xs uppercase tracking-[.24em] text-amber-400">Files</p><h1 className="text-3xl font-semibold mt-2">Storage</h1><p className="muted mt-2">Existing Supabase Storage buckets. No developer bucket is created.</p>{error?<div className="card p-5 mt-7 text-red-200">{error.message}</div>:<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-7">{(data||[]).map(b=><div className="card p-5" key={b.id}><div className="font-semibold">{b.name}</div><div className="text-xs muted mt-2">{b.public?'Public':'Private'} · created {b.created_at?.slice(0,10)||'—'}</div></div>)}</div>}</Shell>}

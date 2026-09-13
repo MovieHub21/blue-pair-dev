@@ -1,0 +1,6 @@
+'use client'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { Activity, Database, Gauge, HardDrive, Settings, Users, Wrench, Terminal } from 'lucide-react'
+const items=[['/dashboard','Overview',Gauge],['/system','Website controls',Settings],['/database','Database',Database],['/users','Users',Users],['/storage','Storage',HardDrive],['/logs','Logs',Activity],['/sql','SQL console',Terminal]] as const
+export default function Nav(){const path=usePathname();return <aside className="w-64 shrink-0 border-r border-white/8 min-h-screen bg-[#060b18] p-4 hidden md:block"><div className="px-3 py-4 mb-3"><div className="text-[10px] uppercase tracking-[.28em] text-amber-400 font-semibold">Blue Pair</div><div className="font-semibold mt-1">Developer Control</div><div className="text-xs muted mt-1">Private operations center</div></div><nav className="space-y-1">{items.map(([href,label,Icon])=><Link key={href} href={href} className={'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition '+(path===href?'bg-white/8 text-white':'text-white/60 hover:bg-white/5 hover:text-white')}><Icon size={17}/>{label}</Link>)}</nav><div className="mt-8 px-3 text-[11px] muted leading-5">This app does not add a developer role, table, migration, or developer identity to the Blue Pair database.</div></aside>}
