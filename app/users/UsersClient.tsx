@@ -7,7 +7,7 @@ export default function UsersClient() {
 
   const load = async () => {
     setLoading(true)
-    const r = await fetch('/api/auth/users')
+    const r = await fetch('/api/auth/users', { cache: 'no-store' })
     const j = await r.json()
     setUsers(j.users || [])
     setLoading(false)
@@ -24,6 +24,7 @@ export default function UsersClient() {
     })
     const j = await r.json()
     if (!r.ok) alert(j.error || 'Failed')
+    else alert(`${label} completed successfully.`)
     await load()
   }
 
@@ -35,6 +36,7 @@ export default function UsersClient() {
             <tr className="text-left muted border-b border-white/8">
               <th className="p-4">Email</th>
               <th className="p-4">Role</th>
+              <th className="p-4">Status</th>
               <th className="p-4">Created</th>
               <th className="p-4">Last sign-in</th>
               <th className="p-4">Actions</th>
@@ -52,6 +54,11 @@ export default function UsersClient() {
                     ? <span className="inline-flex px-2 py-1 rounded-full bg-amber-400/15 text-amber-300 text-xs font-medium">Super Admin</span>
                     : <span className="muted text-xs">User</span>}
                 </td>
+                <td className="p-4">
+                  {u.isBanned
+                    ? <span className="inline-flex px-2 py-1 rounded-full bg-red-400/15 text-red-300 text-xs font-medium">Banned</span>
+                    : <span className="inline-flex px-2 py-1 rounded-full bg-emerald-400/10 text-emerald-300 text-xs">Active</span>}
+                </td>
                 <td className="p-4 muted">{u.created_at?.slice(0, 10)}</td>
                 <td className="p-4 muted">{u.last_sign_in_at?.slice(0, 19) || '—'}</td>
                 <td className="p-4">
@@ -61,7 +68,11 @@ export default function UsersClient() {
                     ) : (
                       <button onClick={() => act(u.id, 'make_super_admin', 'make this user a Super Admin')} className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-200 text-xs">Make Super Admin</button>
                     )}
-                    <button onClick={() => act(u.id, 'ban', 'ban')} className="px-3 py-1.5 rounded-lg bg-white/8 text-xs">Ban</button>
+                    {u.isBanned ? (
+                      <button onClick={() => act(u.id, 'unban', 'unban')} className="px-3 py-1.5 rounded-lg bg-emerald-500/15 text-emerald-200 text-xs">Unban</button>
+                    ) : (
+                      <button onClick={() => act(u.id, 'ban', 'ban')} className="px-3 py-1.5 rounded-lg bg-white/8 text-xs">Ban</button>
+                    )}
                     <button onClick={() => act(u.id, 'delete', 'delete')} className="px-3 py-1.5 rounded-lg bg-red-500/15 text-red-200 text-xs">Delete</button>
                   </div>
                 </td>
