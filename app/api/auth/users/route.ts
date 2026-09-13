@@ -25,6 +25,8 @@ export async function GET() {
       ...user,
       roles: rolesByUser.get(user.id) ?? [],
       isSuperAdmin: (rolesByUser.get(user.id) ?? []).includes('super_admin'),
+      isBanned: !!user.banned_until && new Date(user.banned_until).getTime() > Date.now(),
+      bannedUntil: user.banned_until,
     }))
 
     return NextResponse.json({ users })
@@ -50,11 +52,27 @@ export async function POST(req: Request) {
     }
 
     if (action === 'ban') {
-      const { error } = await supabaseAdmin.auth.admin.updateUserById(id, {
+      const { data, error } = await supabaseAdmin.auth.admin.updateUserById(id, {
         ban_duration: '876000h',
       })
       if (error) throw error
-      return NextResponse.json({ ok: true })
+      return NextResponse.json({
+        ok: true,
+        banned: true,
+        bannedUntil: data.user?.banned_until ?? null,
+      })
+    }
+
+    if (action === 'unban') {
+      const { data, error } = await supabaseAdmin.auth.admin.updateUserById(id, {
+        ban_duration: 'none',
+      })
+      if (error) throw error
+      return NextResponse.json({
+        ok: true,
+        banned: false,
+        bannedUntil: data.user?.banned_until ?? null,
+      })
     }
 
     if (action === 'make_super_admin') {
