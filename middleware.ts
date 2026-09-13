@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import crypto from 'crypto'
 
 export function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname
@@ -7,10 +6,10 @@ export function middleware(req: NextRequest) {
 
   if (publicPaths.includes(path)) return NextResponse.next()
 
-  const expected = process.env.DEV_CONTROL_SECRET
+  const expected = process.env.DEV_CONTROL_SECRET || ''
   const cookieName = process.env.DEV_CONTROL_COOKIE || 'bp_dev_control'
   const value = req.cookies.get(cookieName)?.value || ''
-  const valid = !!expected && value.length === expected.length && crypto.timingSafeEqual(Buffer.from(value), Buffer.from(expected))
+  const valid = !!expected && value === expected
 
   if (valid) return NextResponse.next()
 
